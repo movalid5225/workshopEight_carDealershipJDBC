@@ -288,9 +288,90 @@ public class VehicleDAO {
         return vehicles;
     }
 
-    public int addVehicle(){
+    public int addVehicle() {
+        int rowsAffected = 0;
+        System.out.print("Enter VIN: ");
+        String vin = scanner.nextLine();
 
+        System.out.print("Enter make: ");
+        String make = scanner.nextLine();
+
+        System.out.print("Enter model: ");
+        String model = scanner.nextLine();
+
+        System.out.print("Enter year: ");
+        int year = Integer.parseInt(scanner.nextLine());
+
+        System.out.print("Enter color: ");
+        String color = scanner.nextLine();
+
+        System.out.print("Enter price: ");
+        double price = Double.parseDouble(scanner.nextLine());
+
+        System.out.print("Enter type: ");
+        String type = scanner.nextLine();
+
+        System.out.print("Enter mileage: ");
+        int mileage = scanner.nextInt();
+
+        System.out.print("Is the vehicle sold? (0 = No, 1 = Yes): ");
+        int sold = scanner.nextInt();
+
+        String insertQuery = "INSERT INTO Vehicles (VIN, make, model, year, color, price, type, mileage, sold) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (
+                Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(insertQuery)
+        ) {
+            preparedStatement.setString(1, vin);
+            preparedStatement.setString(2, make);
+            preparedStatement.setString(3, model);
+            preparedStatement.setInt(4, year);
+            preparedStatement.setString(5, color);
+            preparedStatement.setDouble(6, price);
+            preparedStatement.setString(7, type);
+            preparedStatement.setInt(8, mileage);
+            preparedStatement.setInt(9, sold);
+
+            rowsAffected = preparedStatement.executeUpdate();
+
+            if (rowsAffected > 0) {
+                System.out.println("Vehicle added successfully!");
+            } else {
+                System.out.println("Failed to add vehicle.");
+            }
+
+        } catch (Exception e) {
+            System.out.println("CHECK addVehicle() METHOD");
+        }
+        return rowsAffected;
     }
 
+    public int removeVehicle() {
+        int rowsAffected =0;
+        System.out.print("Enter the VIN of the vehicle to remove: ");
+        String vin = scanner.nextLine();
 
+        String deleteQuery = "DELETE FROM Vehicles WHERE VIN = ?";
+
+        try (
+                Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(deleteQuery)
+        ) {
+            preparedStatement.setString(1, vin);
+
+            rowsAffected = preparedStatement.executeUpdate();
+
+            if (rowsAffected > 0) {
+                System.out.println("Vehicle with VIN " + vin + " was successfully removed.");
+            } else {
+                System.out.println("No vehicle found with VIN " + vin + ".");
+            }
+
+        } catch (Exception e) {
+            System.out.println("CHECK removeVehicle() METHOD");
+        }
+        return rowsAffected;
+    }
 }
